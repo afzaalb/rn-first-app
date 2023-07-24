@@ -1,74 +1,89 @@
-import { useState } from "react";
-import { StyleSheet, View, FlatList, Button } from "react-native";
-import GoalItem from "./components/GoalItem";
-import GoalInput from "./components/GoalInput";
+import { StyleSheet, ImageBackground, View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import StartGameScreen from "./screens/StartGameScreen";
+import GameScreen from "./screens/GameScreen";
+import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
+import { SafeAreaView } from "react-native";
+import Colors from "./constants/colors";
+import GameOverScreen from "./screens/GameOverScreen";
+import {
+  useFonts,
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+} from "@expo-google-fonts/poppins";
+import AppLoading from "expo-app-loading";
 
 export default function App() {
-  const [courseGoals, setCourseGoals] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [userNumber, setUserNumber] = useState(null);
+  const [isGameOver, setIsGameOver] = useState(true);
+  const [roundsNumber, setRoundsNumber] = useState(0);
 
-  const toggleModalHandler = () => {
-    setModalVisible((pre) => !pre);
+  const [fontsLoaded] = useFonts({
+    Poppins_300Light,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+  });
+
+  const pickNumberHandler = (pickedNumber) => {
+    setUserNumber(pickedNumber);
+    setIsGameOver(false);
   };
 
-  const addGoalHandler = (enteredGoalText) => {
-    setCourseGoals((previousCourseGoals) => [
-      ...previousCourseGoals,
-      {
-        text: enteredGoalText,
-        key: Math.random().toString(),
-        id: Math.random().toString(),
-      },
-    ]);
-    toggleModalHandler();
+  const gameOverHandler = (noOfRounds) => {
+    setIsGameOver(true);
+    setRoundsNumber(noOfRounds);
   };
 
-  const deleteGoalHandler = (id) => {
-    setCourseGoals((currentCourseGoals) => {
-      return currentCourseGoals.filter((goal) => goal.id !== id);
-    });
+  const startGameHandler = () => {
+    setUserNumber(null);
+    setIsGameOver(false);
+    setRoundsNumber(0);
   };
 
-  return (
-    <>
-      <StatusBar style="auto" />
-      <View style={styles.appContainer}>
-        <Button
-          title="Add New Goal"
-          color="#129cb9"
-          onPress={toggleModalHandler}
-        />
+  let screen = <StartGameScreen onPickNumber={pickNumberHandler} />;
+  if (userNumber) {
+    screen = (
+      <GameScreen userNumber={userNumber} gameOverHandler={gameOverHandler} />
+    );
+  }
 
-        <GoalInput
-          modalVisible={modalVisible}
-          toggleModalHandler={toggleModalHandler}
-          addGoalHandler={addGoalHandler}
-        />
+  if (isGameOver && userNumber) {
+    screen = (
+      <GameOverScreen
+        userNumber={userNumber}
+        roundsNumber={roundsNumber}
+        startGameHandler={startGameHandler}
+      />
+    );
+  }
 
-        <View style={styles.goalsContainer}>
-          <FlatList
-            data={courseGoals}
-            renderItem={(itemData) => {
-              return (
-                <GoalItem
-                  text={itemData.item.text}
-                  deleteGoalHandler={() => deleteGoalHandler(itemData.item.id)}
-                />
-              );
-            }}
-            keyExtractor={(item, index) => item.id}
-            alwaysBounceVertical={false}
-          />
-        </View>
-      </View>
-    </>
-  );
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <LinearGradient
+        colors={[Colors.primary300, Colors.primary500]}
+        style={styles.rootScreen}
+      >
+        <StatusBar style="auto" />
+        <ImageBackground
+          resizeMode="cover"
+          style={styles.rootScreen}
+          imageStyle={styles.bgImg}
+          source={require("./assets/splash.png")}
+        >
+          <SafeAreaView style={styles.rootScreen}>{screen}</SafeAreaView>
+        </ImageBackground>
+      </LinearGradient>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-  appContainer: { paddingTop: 60, paddingHorizontal: 16, flex: 1 },
-  goalsContainer: {
-    flex: 5,
-  },
+  rootScreen: { flex: 1, backgroundColor: Colors.primary300 },
+  bgImg: { opacity: 0.5 },
 });
