@@ -19,12 +19,20 @@ const MealsOverviewScreen = ({ route }) => {
       <FlatList
         data={displayedMeals}
         keyExtractor={(item) => item.id}
-        renderItem={(itemData) => (
-          <View style={styles.gridItem}>
-            <ImageBackground source={itemData.item.image} resizeMode="cover" />
-            <Text>{itemData.item.title}</Text>
-          </View>
-        )}
+        renderItem={(itemData) => {
+          return (
+            <View style={styles.gridItem}>
+              <ImageBackground
+                resizeMode="cover"
+                style={styles.imgContainer}
+                imageStyle={styles.img}
+                source={{ uri: itemData.item.image }}
+              >
+                <Text style={styles.overText}>{itemData.item.title}</Text>
+              </ImageBackground>
+            </View>
+          );
+        }}
         numColumns={2}
       />
     </View>
@@ -40,7 +48,30 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginHorizontal: 16,
     height: 160,
-    borderRadius: 12,
     overflow: Platform.OS === "android" ? "hidden" : "visible",
+  },
+  imgContainer: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    position: "relative",
+    elevation: 4,
+    shadowColor: "#cccccc",
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    shadowOffset: { width: 6, height: 6 },
+  },
+  img: {
+    borderRadius: 16,
+  },
+  overText: {
+    backgroundColor: "rgba(0,0,0,0.5)",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    color: "#fff",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
