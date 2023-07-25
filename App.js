@@ -1,4 +1,4 @@
-import { StyleSheet, ImageBackground, View, Text } from "react-native";
+import { StyleSheet, ImageBackground } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import StartGameScreen from "./screens/StartGameScreen";
 import GameScreen from "./screens/GameScreen";
@@ -65,20 +65,22 @@ export default function App() {
     return <AppLoading />;
   } else {
     return (
-      <LinearGradient
-        colors={[Colors.primary300, Colors.primary500]}
-        style={styles.rootScreen}
-      >
+      <>
         <StatusBar style="auto" />
-        <ImageBackground
-          resizeMode="cover"
+        <LinearGradient
+          colors={[Colors.primary300, Colors.primary500]}
           style={styles.rootScreen}
-          imageStyle={styles.bgImg}
-          source={require("./assets/splash.png")}
         >
-          <SafeAreaView style={styles.rootScreen}>{screen}</SafeAreaView>
-        </ImageBackground>
-      </LinearGradient>
+          <ImageBackground
+            resizeMode="cover"
+            style={styles.rootScreen}
+            imageStyle={styles.bgImg}
+            source={require("./assets/splash.png")}
+          >
+            <SafeAreaView style={styles.rootScreen}>{screen}</SafeAreaView>
+          </ImageBackground>
+        </LinearGradient>
+      </>
     );
   }
 }

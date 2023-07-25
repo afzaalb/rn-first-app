@@ -1,4 +1,11 @@
-import { Alert, StyleSheet, TextInput, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  StyleSheet,
+  TextInput,
+  View,
+  ScrollView,
+} from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
 import { useState } from "react";
 import Colors from "../constants/colors";
@@ -32,42 +39,48 @@ function StartGameScreen({ onPickNumber }) {
   };
 
   return (
-    <View style={styles.inputContainer}>
-      <Title>Guess My Number</Title>
-      <TextInput
-        style={styles.numberInput}
-        maxLength={2}
-        keyboardType="number-pad"
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={enteredNumber}
-        placeholder="Type 2 digit number here"
-        onChangeText={numberInputHandler}
-      />
-      <View style={styles.buttonsContainer}>
-        <View style={styles.buttonContainer}>
-          <PrimaryButton onPress={resetInputHandler}>Reset</PrimaryButton>
+    <ScrollView style={styles.root}>
+      <KeyboardAvoidingView>
+        <View style={styles.inputContainer}>
+          <Title>Guess My Number</Title>
+          <TextInput
+            style={styles.numberInput}
+            maxLength={2}
+            keyboardType="number-pad"
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={enteredNumber}
+            placeholder="Type 2 digit number here"
+            onChangeText={numberInputHandler}
+          />
+          <View style={styles.buttonsContainer}>
+            <View style={styles.buttonContainer}>
+              <PrimaryButton onPress={resetInputHandler}>Reset</PrimaryButton>
+            </View>
+            <View style={styles.buttonContainer}>
+              <PrimaryButton onPress={confirmInputHandler}>
+                Confirm
+              </PrimaryButton>
+            </View>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <PrimaryButton onPress={confirmInputHandler}>Confirm</PrimaryButton>
-        </View>
-      </View>
-    </View>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 }
 
 export default StartGameScreen;
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
   inputContainer: {
-    marginTop: 60,
     padding: 16,
+    marginTop: 40,
     elevation: 8,
-    // backgroundColor: "#70c3d5",
-    // shadowRadius: 6,
-    // shadowOpacity: 0.5,
-    // shadowColor: "#129cb9",
-    // shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 4,
+    shadowOpacity: 0.2,
+    shadowColor: "#129cb9",
+    shadowOffset: { width: 0, height: 2 },
     alignItems: "center",
   },
   numberInput: {
