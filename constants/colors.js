@@ -1,5 +1,5 @@
 const Colors = {
-  border: "#cccccc",
+  border: "#eeeeee",
   dark: "#222222",
   white: "#ffffff",
   ripple: "#0e7c94",
