@@ -5,14 +5,26 @@ import {
   Text,
   Platform,
   ImageBackground,
+  Pressable,
 } from "react-native";
-import { MEALS } from "../data/dummy-data";
+import { CATEGORIES, MEALS } from "../data/dummy-data";
+import { useLayoutEffect } from "react";
+import Colors from "../constants/colors";
 
-const MealsOverviewScreen = ({ route }) => {
+const MealsOverviewScreen = ({ route, navigation }) => {
   const { categoryId } = route.params;
   const displayedMeals = MEALS.filter((meal) => {
     return meal.categoryIds.indexOf(categoryId) >= 0;
   });
+
+  useLayoutEffect(() => {
+    const categoryTitle = CATEGORIES.find(
+      (category) => category.id === categoryId
+    ).title;
+    navigation.setOptions({
+      title: categoryTitle,
+    });
+  }, [categoryId, navigation]);
 
   return (
     <View style={styles.container}>
@@ -21,15 +33,25 @@ const MealsOverviewScreen = ({ route }) => {
         keyExtractor={(item) => item.id}
         renderItem={(itemData) => {
           return (
-            <View style={styles.gridItem}>
-              <ImageBackground
-                resizeMode="cover"
-                style={styles.imgContainer}
-                imageStyle={styles.img}
-                source={{ uri: itemData.item.image }}
+            <View style={styles.itemContainer}>
+              <Pressable
+                style={styles.gridItem}
+                android_ripple={{ color: Colors.ripple }}
+                onPress={() =>
+                  navigation.navigate("MealDetails", {
+                    mealId: itemData.item.id,
+                  })
+                }
               >
-                <Text style={styles.overText}>{itemData.item.title}</Text>
-              </ImageBackground>
+                <ImageBackground
+                  resizeMode="cover"
+                  style={styles.imgContainer}
+                  imageStyle={styles.img}
+                  source={{ uri: itemData.item.image }}
+                >
+                  <Text style={styles.overText}>{itemData.item.title}</Text>
+                </ImageBackground>
+              </Pressable>
             </View>
           );
         }}
@@ -43,6 +65,7 @@ export default MealsOverviewScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  itemContainer: { flex: 1 },
   gridItem: {
     flex: 1,
     marginTop: 16,
@@ -69,9 +92,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     color: "#fff",
+    marginVertical: 10,
+    marginHorizontal: 16,
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
+    borderRadius: 16,
+    overflow: "hidden",
   },
 });
