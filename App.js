@@ -1,16 +1,18 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import WelcomeScreen from "./screens/WelcomeScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import UserScreen from "./screens/UserScreen";
 import Colors from "./constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 
 const Drawer = createDrawerNavigator();
+const BottomTab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator
+      {/* <Drawer.Navigator
         initialRouteName="Welcome"
         screenOptions={{
           headerStyle: { backgroundColor: Colors.primary500 },
@@ -41,7 +43,34 @@ export default function App() {
             ),
           }}
         />
-      </Drawer.Navigator>
+      </Drawer.Navigator> */}
+      <BottomTab.Navigator
+        initialRouteName="Welcome"
+        screenOptions={{
+          headerStyle: { backgroundColor: Colors.primary500 },
+          headerTintColor: Colors.white,
+          tabBarActiveTintColor: Colors.primary500,
+        }}
+      >
+        <BottomTab.Screen
+          name="Welcome"
+          component={WelcomeScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => {
+              return <Ionicons name="home" color={color} size={size} />;
+            },
+          }}
+        />
+        <BottomTab.Screen
+          name="User"
+          component={UserScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => {
+              return <Ionicons name="person" color={color} size={size} />;
+            },
+          }}
+        />
+      </BottomTab.Navigator>
     </NavigationContainer>
   );
 }
