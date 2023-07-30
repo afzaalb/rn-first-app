@@ -1,66 +1,47 @@
-import { StyleSheet, Text } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from "expo-linear-gradient";
-import Colors from "./constants/colors";
-import CategoriesScreen from "./screens/CategoriesScreen";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MealsOverviewScreen from "./screens/MealsOverviewScreen";
-import MealDetailsScreen from "./screens/MealDetailsScreen";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import WelcomeScreen from "./screens/WelcomeScreen";
+import UserScreen from "./screens/UserScreen";
+import Colors from "./constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 
-const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
-    <>
-      <StatusBar style="auto" />
-      <LinearGradient
-        colors={[Colors.primary300, Colors.primary500]}
-        style={styles.rootScreen}
+    <NavigationContainer>
+      <Drawer.Navigator
+        initialRouteName="Welcome"
+        screenOptions={{
+          headerStyle: { backgroundColor: Colors.primary500 },
+          headerTintColor: Colors.white,
+          drawerActiveBackgroundColor: Colors.primary500,
+          drawerActiveTintColor: "white",
+          drawerStyle: { backgroundColor: Colors.primary300 },
+          drawerInactiveTintColor: Colors.primary500,
+        }}
       >
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerStyle: { backgroundColor: Colors.primary300 },
-              headerTintColor: Colors.dark,
-              contentStyle: { backgroundColor: Colors.white },
-            }}
-          >
-            <Stack.Screen
-              name="MealsCategories"
-              component={CategoriesScreen}
-              options={{
-                title: "All Categories",
-              }}
-            />
-            <Stack.Screen
-              name="MealsOverview"
-              component={MealsOverviewScreen}
-              options={{
-                title: "Category Meals",
-              }}
-            />
-            <Stack.Screen
-              name="MealDetails"
-              component={MealDetailsScreen}
-              options={{
-                // These options can be overridden if these are defined within the Screen as well
-                // In this case headerRight options is defined in MealDetailsScreen hence you'll
-                // not be able to see the Head Right Text below
-                headerRight: () => <Text>Head Right</Text>,
-              }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </LinearGradient>
-    </>
+        <Drawer.Screen
+          name="Welcome"
+          component={WelcomeScreen}
+          options={{
+            drawerLabel: "Welcome Screen",
+            drawerIcon: ({ color }) => (
+              <Ionicons name="home" color={color} size={16} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="User"
+          component={UserScreen}
+          options={{
+            drawerLabel: "User Screen",
+            drawerIcon: ({ color }) => (
+              <Ionicons name="person" color={color} size={16} />
+            ),
+          }}
+        />
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  rootScreen: {
-    flex: 1,
-    backgroundColor: Colors.primary300,
-  },
-  bgImg: { opacity: 0.5 },
-});
