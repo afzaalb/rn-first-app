@@ -1,26 +1,32 @@
 import { View, Text, Image, Pressable } from "react-native";
 import { MEALS } from "../data/dummy-data";
-import { useLayoutEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { FavoritesContext } from "../store/context/favorites-context";
 
 const MealDetailsScreen = ({ route, navigation }) => {
   const { mealId } = route.params;
-
   const { title, image } = MEALS.find((meal) => meal.id === mealId);
+  const favoriteMealsContext = useContext(FavoritesContext);
+  const isMealFavorite = favoriteMealsContext.ids.includes(mealId);
 
-  const headerRightButtonHandler = () => {
-    console.log("headerRightButtonHandler");
+  const changeFavoriteStatusHandler = () => {
+    if (isMealFavorite) {
+      favoriteMealsContext.removeFavorite(mealId);
+    } else {
+      favoriteMealsContext.addFavorite(mealId);
+    }
   };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable onPress={headerRightButtonHandler}>
-          <Ionicons name="star-outline" size={20} />
+        <Pressable onPress={changeFavoriteStatusHandler}>
+          <Ionicons name={isMealFavorite ? "star" : "star-outline"} size={20} />
         </Pressable>
       ),
     });
-  }, [navigation]);
+  }, [navigation, isMealFavorite]);
 
   return (
     <View>
