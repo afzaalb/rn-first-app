@@ -1,74 +1,70 @@
-import { useState } from "react";
-import { StyleSheet, View, FlatList, Button } from "react-native";
-import GoalItem from "./components/GoalItem";
-import GoalInput from "./components/GoalInput";
 import { StatusBar } from "expo-status-bar";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import ManageExpense from "./screens/ManageExpense";
+import RecentExpenses from "./screens/RecentExpenses";
+import AllExpenses from "./screens/AllExpenses";
+import { GlobalStyles } from "./constants/styles";
+import { Ionicons } from "@expo/vector-icons";
+
+const Stack = createNativeStackNavigator();
+const BottomTabs = createBottomTabNavigator();
+
+const ExpensesOverview = () => {
+  return (
+    <BottomTabs.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: GlobalStyles.colors.primary300,
+        },
+        tabBarStyle: {
+          backgroundColor: GlobalStyles.colors.primary300,
+        },
+        tabBarActiveTintColor: GlobalStyles.colors.dark,
+        tabBarInactiveTintColor: GlobalStyles.colors.primary600,
+      }}
+    >
+      <BottomTabs.Screen
+        name="RecentExpenses"
+        component={RecentExpenses}
+        options={{
+          title: "Recent Expenses",
+          tabBarLabel: "Recent",
+          tabBarIcon: ({ color, size }) => {
+            return <Ionicons name="wallet-outline" color={color} size={size} />;
+          },
+        }}
+      />
+      <BottomTabs.Screen
+        name="AllExpenses"
+        component={AllExpenses}
+        options={{
+          title: "All Expenses",
+          tabBarLabel: "All Expenses",
+          tabBarIcon: ({ color, size }) => {
+            return <Ionicons name="wallet" color={color} size={size} />;
+          },
+        }}
+      />
+    </BottomTabs.Navigator>
+  );
+};
 
 export default function App() {
-  const [courseGoals, setCourseGoals] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const toggleModalHandler = () => {
-    setModalVisible((pre) => !pre);
-  };
-
-  const addGoalHandler = (enteredGoalText) => {
-    setCourseGoals((previousCourseGoals) => [
-      ...previousCourseGoals,
-      {
-        text: enteredGoalText,
-        key: Math.random().toString(),
-        id: Math.random().toString(),
-      },
-    ]);
-    toggleModalHandler();
-  };
-
-  const deleteGoalHandler = (id) => {
-    setCourseGoals((currentCourseGoals) => {
-      return currentCourseGoals.filter((goal) => goal.id !== id);
-    });
-  };
-
   return (
     <>
       <StatusBar style="auto" />
-      <View style={styles.appContainer}>
-        <Button
-          title="Add New Goal"
-          color="#129cb9"
-          onPress={toggleModalHandler}
-        />
-
-        <GoalInput
-          modalVisible={modalVisible}
-          toggleModalHandler={toggleModalHandler}
-          addGoalHandler={addGoalHandler}
-        />
-
-        <View style={styles.goalsContainer}>
-          <FlatList
-            data={courseGoals}
-            renderItem={(itemData) => {
-              return (
-                <GoalItem
-                  text={itemData.item.text}
-                  deleteGoalHandler={() => deleteGoalHandler(itemData.item.id)}
-                />
-              );
-            }}
-            keyExtractor={(item, index) => item.id}
-            alwaysBounceVertical={false}
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="ExpensesOverview"
+            component={ExpensesOverview}
+            options={{ headerShown: false }}
           />
-        </View>
-      </View>
+          <Stack.Screen name="ManageExpense" component={ManageExpense} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  appContainer: { paddingTop: 60, paddingHorizontal: 16, flex: 1 },
-  goalsContainer: {
-    flex: 5,
-  },
-});
